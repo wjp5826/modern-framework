@@ -26,23 +26,9 @@ function handler(params) {
 //   h('div', null, 'world')
 // ]);
 
-const node = h('div', {
-  class: {
-    a: true,
-    b: true
-  },
-  style: {
-    height: '20px',
-    background: 'red'
-  }
-}, '123')
+const node = h('span', null, '123');
 
-const next = h('div', {
-  style: {
-    height: '20px',
-    background: 'blue'
-  }
-}, '123')
+const next = h('span', null, '456');
 
 render(node, document.getElementById('app'));
 

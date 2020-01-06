@@ -19,7 +19,7 @@ export function patch(prevVNode, nextVNode, container) {
   } else if (prevFlag & VNodeFlags.ELEMENT_HTML) {
     patchElement(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.ELEMENT_SVG) {
-
+  
   } else if (prevFlag & VNodeFlags.FRAGMENT) {
 
   } else if (prevFlag & VNodeFlags.PORTAL) {
@@ -29,7 +29,7 @@ export function patch(prevVNode, nextVNode, container) {
   } else if (prevFlag & VNodeFlags.COMPONENT_FUNCTIONAL) {
 
   } else if (prevFlag & VNodeFlags.TEXT) {
-    
+    patchText(prevVNode, nextVNode);
   }
 }
 
@@ -143,5 +143,12 @@ function patchElement(prevVNode, nextVNode, container) {
         default:
           // 多节点比较，diff算法
       }
+  }
+}
+
+function patchText(prevVNode, nextVNode) {
+  const el = (nextVNode.el = prevVNode.el);
+  if (prevVNode.children !== nextVNode.children) {
+    el.nodeValue = nextVNode.children;
   }
 }
