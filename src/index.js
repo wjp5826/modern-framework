@@ -21,17 +21,19 @@ function handler(params) {
 //   ])
 // ]);
 
-// const nextNode = h(Fragment, null, [
-//   h('div', null, 'hello'),
-//   h('div', null, 'world')
-// ]);
+const nextNode = h(Fragment, null, [
+  h('div', null, 'hello')
+]);
+const node = h(Fragment, null, [
+  h('div', null, 'world')
+]);
 
-const node = h('span', null, '123');
+const next = h('span', null, '123');
 
-const next = h('span', null, '456');
+// const nextNode = h('span', null, '456');
 
-render(node, document.getElementById('app'));
+render(nextNode, document.getElementById('app'));
 
 setTimeout(() => {
-  render(next, document.getElementById('app'));
+  render(node, document.getElementById('app'));
 }, 2000);

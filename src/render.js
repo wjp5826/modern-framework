@@ -5,7 +5,7 @@ import { patch } from './patch';
 export const domProp = /\[A-Z]|^(?:value|checked|selected|muted)$/
 
 export default function render(vnode, container) {
-  const prevNode = container.vnode;  
+  const prevNode = container.vnode;
   if (prevNode == null) {
     // 旧的没有，只有新的
     mount(vnode, container);
@@ -28,6 +28,7 @@ export default function render(vnode, container) {
  */
 export function mount(vnode, container, isSVG) {
   const { flags } = vnode;
+  console.log('vnode', vnode);
   if (flags & VNodeFlags.ELEMENT_HTML) { // 普通节点
     mountElement(vnode, container, isSVG);
   } else if (flags & VNodeFlags.TEXT) { // 纯文本
@@ -56,34 +57,8 @@ function mountElement(vnode, container, isSVG) {
    : document.createElement(vnode.tag);
   vnode.el = el;
   const data = vnode.data;
-  console.log('vnode', vnode)
   if (data) {
     for (let key in data) {
-      // 有class、style、on等
-      // switch(key) {
-      //   case 'style':
-      //     for (let s in data[key]) {
-      //       el.style[s] = data[key][s];
-      //     }
-      //     break;
-      //   case 'class':
-      //     // 可能的值有对象、数组、或者是字符串
-      //     const c = data[key]; // class对应的值
-      //     const classList = applyClassName(c);
-      //     el.className = classList.join(' ');
-      //     break;
-      //   default:
-      //     if (key.slice(0, 2) === 'on') {
-      //       el.addEventListener(key.slice(2), data[key]);
-      //       break;
-      //     }
-      //     if (domProp.test(key)) { // 以 property 方式添加
-      //       el[key] = data[key];
-      //     } else {
-      //       el.setAttribute(key, data[key]);
-      //     }
-      //     break;
-      // }
       patchData(el, key, null, data);
     }
   }
@@ -112,15 +87,18 @@ function mountFragment(vnode, container) {
   switch(childrenFlag) {
     case ChildrenFlages.SINGLE_VNODE:
       mount(children, container);
+      vnode.el = children.el;
       break;
     case ChildrenFlages.NO_CHILDREN:
-        const textVnode = createTextNode('');
-        mountText(textVnode, container);
+        const textVNode = createTextNode('');
+        mountText(textVNode, container);
+        vnode.el = children.el;
       break;
     default:
       children.forEach(ele => {
         mount(ele, container);
-      })
+      });
+      vnode.el = children[0].el;
   }
 }
 /**

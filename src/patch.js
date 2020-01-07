@@ -21,7 +21,7 @@ export function patch(prevVNode, nextVNode, container) {
   } else if (prevFlag & VNodeFlags.ELEMENT_SVG) {
   
   } else if (prevFlag & VNodeFlags.FRAGMENT) {
-
+    patchFragment(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.PORTAL) {
 
   } else if (prevFlag & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
@@ -80,31 +80,58 @@ function patchElement(prevVNode, nextVNode, container) {
   const prevChildFlag = prevVNode.childrenFlag;
   const nextChildFlag = nextVNode.childrenFlag;
   // 更新children
-  // 总共九种情况
-  /**
-   *   没有子节点
-   *      没有子节点
-   *      单个子节点
-   *      多个子节点
-   *   单个子节点
-   *      没有子节点
-   *      单个子节点
-   *      多个子节点
-   *   多个子节点
-   *      没有子节点
-   *      单个子节点
-   *      多个子节点
-   */
+  const prevChildren = prevVNode.children;
+  const nextChildren = nextVNode.children;
+  
+  patchChildren(
+    prevChildFlag,
+    nextChildFlag,
+    prevChildren,
+    nextChildren,
+    container
+  );
+}
+
+function patchText(prevVNode, nextVNode) {
+  const el = (nextVNode.el = prevVNode.el);
+  if (prevVNode.children !== nextVNode.children) {
+    el.nodeValue = nextVNode.children;
+  }
+}
+
+/**
+ * 子节点比较
+ * @param prevChildFlag
+ * @param nextChildFlag
+ * @param prevChildren
+ * @param nextChildren
+ * @param container
+ * 九种情况
+ * /**
+ *   没有子节点
+ *      没有子节点
+ *      单个子节点
+ *      多个子节点
+ *   单个子节点
+ *      没有子节点
+ *      单个子节点
+ *      多个子节点
+ *   多个子节点
+ *      没有子节点
+ *      单个子节点
+ *      多个子节点
+ */
+function patchChildren(prevChildFlag, nextChildFlag, prevChildren, nextChildren, container) {
   switch(prevChildFlag) {
     case ChildrenFlages.NO_CHILDREN:
       switch (nextChildFlag) {
         case ChildrenFlages.NO_CHILDREN:
           break;
         case ChildrenFlages.SINGLE_VNODE:
-          mount(nextVNode, container);
+          mount(nextChildren, container);
           break;
         default:
-          nextVNode.children.forEach(ele => {
+          nextChildren.forEach(ele => {
             mount(ele, container);
           });
       }
@@ -112,16 +139,16 @@ function patchElement(prevVNode, nextVNode, container) {
     case ChildrenFlages.SINGLE_VNODE:
       switch (nextChildFlag) {
         case ChildrenFlages.NO_CHILDREN:
-          container.removeChild(prevVNode.el);
+          container.removeChild(prevChildren.el);
           break;
         case ChildrenFlages.SINGLE_VNODE:
-          patch(prevVNode.children, nextVNode.children, container);
+          patch(prevChildren, nextChildren, container);
           break;
         default:
           // 移除旧的节点
-          container.removeChild(prevVNode.el);
+          container.removeChild(prevChildren.el);
           // 挂载新的节点
-          nextVNode.children.forEach(ele => {
+          nextChildren.forEach(ele => {
             mount(ele, container);
           });
       }
@@ -129,26 +156,46 @@ function patchElement(prevVNode, nextVNode, container) {
     default: // 多个子节点
       switch (nextChildFlag) {
         case ChildrenFlages.NO_CHILDREN:
-          prevVNode.children.forEach(ele => {
+          prevChildren.forEach(ele => {
             container.removeChild(ele.el);
           });
           break;
         case ChildrenFlages.SINGLE_VNODE:
           // 先移除再挂载
-          prevVNode.children.forEach(ele => {
+          prevChildren.forEach(ele => {
             container.removeChild(ele.el);
           });
-          mount(nextVNode, container);
+          mount(nextChildren, container);
           break;
         default:
-          // 多节点比较，diff算法
+        // 多节点比较，diff算法
       }
   }
 }
 
-function patchText(prevVNode, nextVNode) {
-  const el = (nextVNode.el = prevVNode.el);
-  if (prevVNode.children !== nextVNode.children) {
-    el.nodeValue = nextVNode.children;
+/**
+ * 对 fragment 打补丁
+ * @param prevVNode
+ * @param nextVNode
+ * @param container
+ */
+function patchFragment(prevVNode, nextVNode, container) {
+  patchChildren(
+    prevVNode.childrenFlag,
+    nextVNode.childrenFlag,
+    prevVNode.children,
+    nextVNode.children,
+    container
+  );
+  // 需要处理下实例的引用
+  switch (nextVNode.childrenFlag) {
+    case ChildrenFlages.SINGLE_VNODE:
+      nextVNode.el = nextVNode.children.el;
+      break;
+    case ChildrenFlages.NO_CHILDREN:
+      nextVNode.el = prevVNode.el;
+      break;
+    default:
+      nextVNode.el = nextVNode.children[0].el;
   }
 }
