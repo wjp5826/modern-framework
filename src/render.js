@@ -117,6 +117,7 @@ function mountPortal(vnode, container) {
       mount(ele, target);
     });
   }
+  vnode.el = target;
 }
 /**
  * 挂载有状态组件

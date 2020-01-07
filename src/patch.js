@@ -23,7 +23,7 @@ export function patch(prevVNode, nextVNode, container) {
   } else if (prevFlag & VNodeFlags.FRAGMENT) {
     patchFragment(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.PORTAL) {
-
+    patchPortal(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
 
   } else if (prevFlag & VNodeFlags.COMPONENT_FUNCTIONAL) {
@@ -121,7 +121,13 @@ function patchText(prevVNode, nextVNode) {
  *      单个子节点
  *      多个子节点
  */
-function patchChildren(prevChildFlag, nextChildFlag, prevChildren, nextChildren, container) {
+function patchChildren(
+  prevChildFlag,
+  nextChildFlag,
+  prevChildren,
+  nextChildren,
+  container
+) {
   switch(prevChildFlag) {
     case ChildrenFlages.NO_CHILDREN:
       switch (nextChildFlag) {
@@ -198,4 +204,39 @@ function patchFragment(prevVNode, nextVNode, container) {
     default:
       nextVNode.el = nextVNode.children[0].el;
   }
+}
+
+/**
+ * patch portal
+ * 1、比对 children
+ * 2、如果挂载目标变了，需要变更dom
+ * @param prevVNode
+ * @param nextVNode
+ * @param container
+ */
+function patchPortal(prevVNode, nextVNode, container) {
+  patchChildren(
+    prevVNode.childrenFlag,
+    nextVNode.childrenFlag,
+    prevVNode.children,
+    nextVNode.children,
+    prevVNode.el
+  );
+  // 挂载目标变更
+  if (nextVNode.tag !== prevVNode.tag) {
+    const tag = document.querySelector(nextVNode.tag);
+    switch (nextVNode.childrenFlag) {
+      case ChildrenFlages.SINGLE_VNODE:
+        tag.appendChild(nextVNode.children.el);
+        break;
+      case ChildrenFlages.NO_CHILDREN:
+        break;
+      default:
+        nextVNode.children.forEach(ele => {
+          tag.appendChild(ele.el);
+        });
+    }
+  }
+  // 处理下实例引用
+  nextVNode.el = prevVNode.el;
 }

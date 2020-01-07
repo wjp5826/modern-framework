@@ -21,10 +21,9 @@ function handler(params) {
 //   ])
 // ]);
 
-const nextNode = h(Fragment, null, [
-  h('div', null, 'hello')
-]);
-const node = h(Fragment, null, [
+const nextNode = h(Portal, { target: '#test' }, []);
+
+const node = h(Portal, { target: '#app' }, [
   h('div', null, 'world')
 ]);
 
@@ -32,8 +31,8 @@ const next = h('span', null, '123');
 
 // const nextNode = h('span', null, '456');
 
-render(nextNode, document.getElementById('app'));
+render(node, document.getElementById('app'));
 
 setTimeout(() => {
-  render(node, document.getElementById('app'));
+  render(nextNode, document.getElementById('app'));
 }, 2000);
