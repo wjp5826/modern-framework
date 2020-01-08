@@ -36,7 +36,7 @@ class child2 {
 // statefulComponent
 class my {
   
-  // state = true;
+  state = true;
   
   // mounted() {
   //   setTimeout(() => {
