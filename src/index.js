@@ -21,6 +21,51 @@ function handler(params) {
 //   ])
 // ]);
 
+class child1 {
+  render() {
+    return h('div', null, 'hello')
+  }
+}
+
+class child2 {
+  render() {
+    return h('span', null, 'world')
+  }
+}
+
+// statefulComponent
+class my {
+  
+  state = true;
+  
+  mounted() {
+    setTimeout(() => {
+      this.state = false;
+      this.update();
+    }, 2000)
+  }
+  
+  render() {
+    return this.state ? h(child1) : h(child2);
+  }
+}
+
+// class my2 {
+//
+//   state = 'world';
+//
+//   mounted() {
+//     // setTimeout(() => {
+//     //   this.state = 'world';
+//     //   this.update();
+//     // }, 2000)
+//   }
+//
+//   render() {
+//     return h('div', null, this.state)
+//   }
+// }
+
 const nextNode = h(Portal, { target: '#test' }, []);
 
 const node = h(Portal, { target: '#app' }, [
@@ -31,8 +76,8 @@ const next = h('span', null, '123');
 
 // const nextNode = h('span', null, '456');
 
-render(node, document.getElementById('app'));
+render(h(my), document.getElementById('app'));
 
-setTimeout(() => {
-  render(nextNode, document.getElementById('app'));
-}, 2000);
+// setTimeout(() => {
+//   render(h(my2), document.getElementById('app'));
+// }, 2000);

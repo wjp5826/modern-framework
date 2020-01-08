@@ -121,19 +121,36 @@ function mountPortal(vnode, container) {
 }
 /**
  * 挂载有状态组件
- * @param {*} vnode 
+ * @param {*} VNode
  * @param {*} container 
  * @param {*} isSVG 
  */
-function mountStatefulComponent(vnode, container, isSVG) {
+function mountStatefulComponent(VNode, container, isSVG) {
   // 创建组件实例
-  const instance = new vnode.tag();
-  // 生成vnode
-  instance.$vnode = instance.render();
-  // 挂载
-  mount(instance.$vnode, container, isSVG);
-  // 保存下实例
-  instance.$el = vnode.el = instance.$vnode.el;
+  const instance = new VNode.tag();
+  instance.isMounted = false; // 是否已经挂载过
+  
+  instance.$props = VNode.data;
+  
+  function update() {
+    if (instance.isMounted) { // 其后的更新
+      // VNode的children属性保存组件的实例属性
+      const prevVNode = (VNode.children = instance.$vnode);
+      const nextVNode = (instance.$vnode = instance.render());
+      patch(prevVNode, nextVNode, container);
+    } else { // 首次挂载
+      // 生成 VNode
+      instance.$vnode = instance.render();
+      // 挂载
+      mount(instance.$vnode, container, isSVG);
+      instance.isMounted = true;
+      // 保存下实例
+      instance.$el = VNode.el = instance.$vnode.el;
+      instance.mounted && instance.mounted();
+    }
+  }
+  instance.update = update;
+  update();
 }
 /**
  * 挂载函数式组件

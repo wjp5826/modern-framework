@@ -25,9 +25,9 @@ export function patch(prevVNode, nextVNode, container) {
   } else if (prevFlag & VNodeFlags.PORTAL) {
     patchPortal(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
-
+    patchStatefulComponent(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.COMPONENT_FUNCTIONAL) {
-
+  
   } else if (prevFlag & VNodeFlags.TEXT) {
     patchText(prevVNode, nextVNode);
   }
@@ -37,6 +37,10 @@ function replaceVNode(prevVNode, nextVNode, container) {
   // TODO: 需要移除事件
   // 移除旧节点
   container.removeChild(prevVNode.el);
+  if (prevVNode.childrenFlag & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
+    const instance = prevVNode.children;
+    instance.destory = instance.destory();
+  }
   // 挂载新节点
   mount(nextVNode, container);
 }
@@ -239,4 +243,16 @@ function patchPortal(prevVNode, nextVNode, container) {
   }
   // 处理下实例引用
   nextVNode.el = prevVNode.el;
+}
+
+/**
+ * 组件更新原则，不同的组件渲染不同的内容
+ * @param prevVNode
+ * @param nextVNode
+ * @param container
+ */
+function patchStatefulComponent(prevVNode, nextVNode, container) {
+  if (prevVNode.tag !== nextVNode.tag) {
+    replaceVNode(prevVNode, nextVNode, container);
+  }
 }

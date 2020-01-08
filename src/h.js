@@ -86,7 +86,7 @@ export function h(tag, data = null, children = null) {
   } else {
     // 兼容 vue2 的对象式组件
     if (tag !== null && typeof tag === 'object') {
-      flags === tag.functional
+      flags = tag.functional
         ? VNodeFlags.COMPONENT_FUNCTIONAL
         : VNodeFlags.COMPONENT_STATEFUL_NORMAL;
     } else if (typeof tag === 'function') { // class 组件
