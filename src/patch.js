@@ -27,7 +27,7 @@ export function patch(prevVNode, nextVNode, container) {
   } else if (prevFlag & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
     patchStatefulComponent(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.COMPONENT_FUNCTIONAL) {
-  
+    patchFunctionComponent(prevVNode, nextVNode, container);
   } else if (prevFlag & VNodeFlags.TEXT) {
     patchText(prevVNode, nextVNode);
   }
@@ -252,6 +252,16 @@ function patchPortal(prevVNode, nextVNode, container) {
  * @param container
  */
 function patchStatefulComponent(prevVNode, nextVNode, container) {
+  if (prevVNode.tag !== nextVNode.tag) {
+    replaceVNode(prevVNode, nextVNode, container);
+    return;
+  }
+  const instance = (nextVNode.children = prevVNode.children);
+  instance.$props = nextVNode.data;
+  instance.update();
+}
+
+function patchFunctionComponent(prevVNode, nextVNode, container) {
   if (prevVNode.tag !== nextVNode.tag) {
     replaceVNode(prevVNode, nextVNode, container);
   }

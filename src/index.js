@@ -38,33 +38,36 @@ class my {
   
   state = true;
   
-  mounted() {
-    setTimeout(() => {
-      this.state = false;
-      this.update();
-    }, 2000)
-  }
+  // mounted() {
+  //   setTimeout(() => {
+  //     this.state = false;
+  //     this.update();
+  //   }, 2000)
+  // }
   
+  // render() {
+  //   return this.state ? h(child1) : h(child2);
+  // }
   render() {
-    return this.state ? h(child1) : h(child2);
+    return h('div', null, 'hello');
   }
 }
 
-// class my2 {
-//
-//   state = 'world';
-//
-//   mounted() {
-//     // setTimeout(() => {
-//     //   this.state = 'world';
-//     //   this.update();
-//     // }, 2000)
-//   }
-//
-//   render() {
-//     return h('div', null, this.state)
-//   }
-// }
+class my2 {
+
+  state = 'world';
+
+  mounted() {
+    // setTimeout(() => {
+    //   this.state = 'world';
+    //   this.update();
+    // }, 2000)
+  }
+
+  render() {
+    return h('div', null, 'world')
+  }
+}
 
 const nextNode = h(Portal, { target: '#test' }, []);
 
@@ -78,6 +81,6 @@ const next = h('span', null, '123');
 
 render(h(my), document.getElementById('app'));
 
-// setTimeout(() => {
-//   render(h(my2), document.getElementById('app'));
-// }, 2000);
+setTimeout(() => {
+  render(h(my2), document.getElementById('app'));
+}, 2000);

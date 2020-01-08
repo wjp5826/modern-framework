@@ -127,7 +127,7 @@ function mountPortal(vnode, container) {
  */
 function mountStatefulComponent(VNode, container, isSVG) {
   // 创建组件实例
-  const instance = new VNode.tag();
+  const instance = (VNode.children = new VNode.tag());
   instance.isMounted = false; // 是否已经挂载过
   
   instance.$props = VNode.data;
@@ -135,7 +135,7 @@ function mountStatefulComponent(VNode, container, isSVG) {
   function update() {
     if (instance.isMounted) { // 其后的更新
       // VNode的children属性保存组件的实例属性
-      const prevVNode = (VNode.children = instance.$vnode);
+      const prevVNode = instance.$vnode;
       const nextVNode = (instance.$vnode = instance.render());
       patch(prevVNode, nextVNode, container);
     } else { // 首次挂载
@@ -154,17 +154,26 @@ function mountStatefulComponent(VNode, container, isSVG) {
 }
 /**
  * 挂载函数式组件
- * @param {*} vnode 
+ * @param {*} VNode
  * @param {*} container 
  * @param {*} isSVG 
  */
-function mountFunctionComponent(vnode, container, isSVG) {
-  // 生成vnode
-  const $vnode = vnode.tag();
-  // 挂载
-  mount($vnode, container, isSVG);
-  // 引用实例
-  vnode.el = $vnode.el;
+function mountFunctionComponent(VNode, container, isSVG) {
+  VNode.handle = {
+    prev: null,
+    next: VNode,
+    container,
+    update() {
+      // 生成vnode
+      const $VNode = VNode.tag();
+      // 挂载
+      mount($VNode, container, isSVG);
+      // 引用实例
+      VNode.el = $VNode.el;
+    }
+  };
+  
+  VNode.handle.update();
 }
 /**
  * 挂载文本
