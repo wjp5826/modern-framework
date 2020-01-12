@@ -75,12 +75,19 @@ const node = h(Portal, { target: '#app' }, [
   h('div', null, 'world')
 ]);
 
-const next = h('span', null, '123');
+// const next = h('span', null, '123');
 
 // const nextNode = h('span', null, '456');
 
-render(h(my), document.getElementById('app'));
+// 函数式组件
+
+function functionCom ({ text }) {
+  return h('span', null, text);
+}
+
+
+render(h(functionCom, { text: 'hello' }), document.getElementById('app'));
 
 setTimeout(() => {
-  render(h(my2), document.getElementById('app'));
+  render(h(functionCom, { text: 'world' }), document.getElementById('app'));
 }, 2000);

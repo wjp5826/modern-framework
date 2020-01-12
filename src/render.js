@@ -164,12 +164,27 @@ function mountFunctionComponent(VNode, container, isSVG) {
     next: VNode,
     container,
     update() {
-      // 生成vnode
-      const $VNode = VNode.tag();
-      // 挂载
-      mount($VNode, container, isSVG);
-      // 引用实例
-      VNode.el = $VNode.el;
+      // 这里是更新操作
+      if (VNode.handle.prev) {
+        const preVNode = VNode.handle.prev;
+        const nextVNode = VNode.handle.next;
+        
+        const props = nextVNode.data;
+        
+        const prevNode = preVNode.children; // 组件产生的旧node
+        const nextNode = (nextVNode.children = nextVNode.tag(props));
+        
+        patch(prevNode, nextNode, container);
+        
+      } else {
+        const props = VNode.data;
+        // 生成vnode
+        const $VNode = (VNode.children = VNode.tag(props));
+        // 挂载
+        mount($VNode, container, isSVG);
+        // 引用实例
+        VNode.el = $VNode.el;
+      }
     }
   };
   

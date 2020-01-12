@@ -261,8 +261,22 @@ function patchStatefulComponent(prevVNode, nextVNode, container) {
   instance.update();
 }
 
+/**
+ * 更新函数式组件
+ * @param prevVNode
+ * @param nextVNode
+ * @param container
+ */
 function patchFunctionComponent(prevVNode, nextVNode, container) {
   if (prevVNode.tag !== nextVNode.tag) {
     replaceVNode(prevVNode, nextVNode, container);
+    return;
   }
+  const handle = (nextVNode.handle = prevVNode.handle);
+  
+  handle.prev = prevVNode;
+  handle.next = nextVNode;
+  handle.container = container;
+  
+  handle.update();
 }
