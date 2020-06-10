@@ -1,4 +1,4 @@
-# modern-framework
+# modern-framework ![](https://img.shields.io/badge/rollup-4.x-brightgreen) ![](https://img.shields.io/badge/modern-0.x-green) ![](https://img.shields.io/badge/babel-7.x-orange)
 
 ### 简介
 
