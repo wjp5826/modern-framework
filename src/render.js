@@ -232,7 +232,7 @@ export function patchData(el, key, prevData, nextData) {
       // 事件
       if (key.slice(0, 2) === 'on') {
         if (prevData) {
-          el.removeEventListener(key.slice(2), nextData[key]);
+          el.removeEventListener(key.slice(2), prevData[key]);
         }
         if (nextData) {
           el.addEventListener(key.slice(2), nextData[key]);

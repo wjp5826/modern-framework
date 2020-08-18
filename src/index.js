@@ -85,9 +85,19 @@ function functionCom ({ text }) {
   return h('span', null, text);
 }
 
+const oldUl = h('ul', null, [
+  h('li', { key: '1' }, '1'),
+  h('li', { key: '2' }, '2'),
+  h('li', { key: '3' }, '3'),
+])
 
-render(h(functionCom, { text: 'hello' }), document.getElementById('app'));
+const newUl = h('ul', null, [
+  h('li', { key: '3' }, '3'),
+  h('li', { key: '2' }, '2'),
+  h('li', { key: '1' }, '1'),
+])
+render(oldUl, document.getElementById('app'));
 
 setTimeout(() => {
-  render(h(functionCom, { text: 'world' }), document.getElementById('app'));
+  render(newUl, document.getElementById('app'));
 }, 2000);
