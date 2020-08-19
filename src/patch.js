@@ -188,9 +188,12 @@ function patchChildren(
           // 则说明新旧 children 中节点顺序相同，不需要移动操作。
           // 相反的，如果在寻找的过程中遇到的索引值不呈现递增趋势，则说明需要移动操作
         let maxIndex = 0;
+        let findNewNode = false;
         for (let i = 0;i < nextChildren.length;i++) {
+          findNewNode = false;
           for (let j = 0;j < prevChildren.length;j++) {
             if (nextChildren[i].key === prevChildren[j].key) {
+              findNewNode = true;
               patch(prevChildren[j], nextChildren[i], container);
               if (j < maxIndex) { // 需要移动
                 container.insertBefore(prevChildren[j].el, nextChildren[i-1].el.nextSibling);
@@ -199,6 +202,10 @@ function patchChildren(
               }
               break;
             }
+          }
+          if (!findNewNode) {
+            const node = i === 0 ? prevChildren[0].el : nextChildren[i - 1].el.nextSibling;
+            mount(nextChildren[i], container, false, node);
           }
         }
       }

@@ -26,11 +26,11 @@ export default function render(vnode, container) {
  * @param {*} container 
  * @param {是否是 svg 标签} isSVG 
  */
-export function mount(vnode, container, isSVG) {
+export function mount(vnode, container, isSVG, node) {
   const { flags } = vnode;
   console.log('vnode', vnode);
   if (flags & VNodeFlags.ELEMENT_HTML) { // 普通节点
-    mountElement(vnode, container, isSVG);
+    mountElement(vnode, container, isSVG, node);
   } else if (flags & VNodeFlags.TEXT) { // 纯文本
     mountText(vnode, container);
   } else if (flags & VNodeFlags.FRAGMENT) { // fragment
@@ -50,7 +50,7 @@ export function mount(vnode, container, isSVG) {
  * @param container
  * @param isSVG
  */
-function mountElement(vnode, container, isSVG) {
+function mountElement(vnode, container, isSVG, node) {
   isSVG = isSVG || vnode.flags & VNodeFlags.ELEMENT_SVG;
   const el = isSVG
    ? document.createElementNS('http://www.w3.org/2000/svg', vnode.tag)
@@ -75,7 +75,7 @@ function mountElement(vnode, container, isSVG) {
       }
     }
   }
-  container.appendChild(el);
+  node ? container.insertBefore(el, node) : container.appendChild(el);
 }
 /**
  * 挂载fragment
