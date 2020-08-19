@@ -208,6 +208,12 @@ function patchChildren(
             mount(nextChildren[i], container, false, node);
           }
         }
+        // remove child
+		    prevChildren.forEach(ele => {
+		    	if (!nextChildren.some(item => item.key === ele.key)) {
+		    		container.removeChild(ele.el);
+			    }
+		    })
       }
   }
 }
