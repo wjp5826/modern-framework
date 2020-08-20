@@ -86,15 +86,15 @@ function functionCom ({ text }) {
 }
 
 const oldUl = h('ul', null, [
-  h('li', { key: '1' }, '1'),
-  h('li', { key: '2' }, '2'),
-  h('li', { key: '3' }, '3'),
+  h('li', null, '1'),
+  h('li', null, '2'),
+  h('li', null, '3'),
 ])
 
 const newUl = h('ul', null, [
-  h('li', { key: '3' }, '3'),
-  h('li', { key: '2' }, '2'),
-  h('li', { key: '1' }, '1'),
+  h('li', null, '1'),
+  // h('li', null, '3'),
+  h('li', null, '2'),
 ])
 render(oldUl, document.getElementById('app'));
 
